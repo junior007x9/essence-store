@@ -2,35 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Forçamos o tema claro no nível da raiz para não depender do sistema */
 :root {
   --background: #f4f1ee;
   --foreground: #111111;
 }
 
-/* Forçamos o site a ignorar o tema do sistema e ficar sempre legível */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #f4f1ee;
-    --foreground: #111111;
-  }
+/* Garante que o navegador entenda que o site é "Light Mode" */
+html {
+  color-scheme: light;
 }
 
 body {
-  color: var(--foreground) !important;
-  background: var(--background) !important;
-  font-family: Arial, Helvetica, sans-serif;
+  color: #111111;
+  background-color: #f4f1ee;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Garante que inputs e textos sejam sempre escuros */
+/* Reset para garantir que o modo escuro do celular não inverta as cores */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #f4f1ee !important;
+    color: #111111 !important;
+  }
+}
+
+/* Estilização padrão de inputs para máxima legibilidade */
 input, textarea, select {
   color: #111111 !important;
   background-color: #ffffff !important;
+  border-color: #d1d5db !important;
 }
 
 input::placeholder, textarea::placeholder {
-  color: #666666 !important;
-}
-
-h1, h2, h3, h4, p, span {
-  color: inherit !important;
+  color: #9ca3af !important;
 }
