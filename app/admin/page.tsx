@@ -11,7 +11,6 @@ export default function AdminPage() {
   const [carregando, setCarregando] = useState(false);
   const [listaProdutos, setListaProdutos] = useState<any[]>([]);
 
-  // Carrega produtos apenas se estiver autenticado
   useEffect(() => {
     if (autenticado) {
       carregarLista();
@@ -36,13 +35,12 @@ export default function AdminPage() {
     setMensagem('');
 
     const formData = new FormData(event.currentTarget);
-    // Adiciona a senha de acesso oculta no envio do formulário
     formData.append('senhaAdmin', senhaAcesso); 
 
     const resposta = await adicionarProduto(formData);
 
     if (resposta.sucesso) {
-      setMensagem('Produto e imagem cadastrados com sucesso!');
+      setMensagem('Produto cadastrado com sucesso!');
       (event.target as HTMLFormElement).reset(); 
       carregarLista(); 
     } else {
@@ -59,12 +57,10 @@ export default function AdminPage() {
         carregarLista(); 
       } else {
         alert(resposta.erro || "Erro ao tentar deletar.");
-        if (resposta.erro?.includes('Acesso Negado')) setAutenticado(false);
       }
     }
   }
 
-  // SE NÃO ESTIVER AUTENTICADO: Mostra tela de Login
   if (!autenticado) {
     return (
       <main className="min-h-screen bg-[#f4f1ee] flex flex-col items-center justify-center p-4">
@@ -72,55 +68,69 @@ export default function AdminPage() {
            <div className="w-16 h-16 bg-[#330f4a] p-2 rounded-2xl mx-auto mb-6 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
            </div>
-           <h1 className="text-xl font-bold text-gray-800 mb-6">Acesso Restrito</h1>
+           <h1 className="text-xl font-bold text-gray-800 mb-6">Acesso Administrativo</h1>
            <form onSubmit={handleLogin} className="space-y-4">
              <input 
                type="password" 
                required
-               placeholder="Digite a senha de administrador" 
+               placeholder="Senha da Essence" 
                value={senhaAcesso}
                onChange={(e) => setSenhaAcesso(e.target.value)}
                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-center focus:outline-none focus:ring-2 focus:ring-[#330f4a]" 
              />
-             <button type="submit" className="w-full bg-[#330f4a] text-white font-bold py-3 rounded-xl transition-colors">Entrar</button>
+             <button type="submit" className="w-full bg-[#330f4a] text-white font-bold py-3 rounded-xl transition-colors">Entrar no Painel</button>
            </form>
         </div>
       </main>
     );
   }
 
-  // SE ESTIVER AUTENTICADO: Mostra o Painel (Código igual ao anterior)
   return (
     <main className="min-h-screen bg-[#f4f1ee] flex items-start justify-center p-4 md:p-10">
       <div className="w-full max-w-5xl flex flex-col md:flex-row gap-8">
         
-        {/* LADO ESQUERDO: O Formulário */}
-        <div className="w-full md:w-1/2 bg-white rounded-[2rem] shadow-xl p-8 border border-gray-100 h-max">
-          <div className="flex justify-between items-start mb-8">
-            <div className="flex flex-col">
-              <h1 className="text-2xl font-bold text-[#330f4a]">Novo Produto</h1>
-              <span className="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded w-max mt-1">Sessão Segura</span>
-            </div>
-            <button onClick={() => setAutenticado(false)} className="text-sm text-gray-500 hover:text-red-500 underline">Sair</button>
+        <div className="w-full md:w-1/2 bg-white rounded-[2rem] shadow-xl p-6 md:p-8 border border-gray-100 h-max">
+          <div className="flex justify-between items-start mb-6">
+            <h1 className="text-2xl font-bold text-[#330f4a]">Novo Produto</h1>
+            <button onClick={() => setAutenticado(false)} className="text-xs text-red-500 font-bold uppercase tracking-wider">Sair</button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Foto (ImgBB)</label>
-              <input required type="file" name="imagem" accept="image/*" className="w-full px-4 py-2 rounded-xl border border-gray-200 cursor-pointer" />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* CAMPO DE IMAGEM MELHORADO PARA CELULAR */}
+            <div className="relative">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Selecione a Foto</label>
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all overflow-hidden">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg className="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
+                    <p className="text-xs text-gray-500">Toque para abrir a Galeria</p>
+                  </div>
+                  <input 
+                    required 
+                    type="file" 
+                    name="imagem" 
+                    accept="image/*"
+                    capture="environment" // Dica para abrir a câmera no mobile (opcional)
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                  />
+                </label>
+              </div>
             </div>
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Nome</label>
-              <input required type="text" name="nome" className="w-full px-4 py-3 rounded-xl border border-gray-200" />
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Nome do Produto</label>
+              <input required type="text" name="nome" placeholder="Ex: Lily Absolu" className="w-full px-4 py-3 rounded-xl border border-gray-200" />
             </div>
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Descrição</label>
-              <textarea required name="descricao" rows={2} className="w-full px-4 py-3 rounded-xl border border-gray-200"></textarea>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Descrição Detalhada</label>
+              <textarea required name="descricao" rows={3} placeholder="Conte detalhes sobre o produto..." className="w-full px-4 py-3 rounded-xl border border-gray-200"></textarea>
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Preço (R$ 0,00)</label>
-                <input required type="text" name="preco" className="w-full px-4 py-3 rounded-xl border border-gray-200" />
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Preço (R$)</label>
+                <input required type="text" name="preco" placeholder="128,00" className="w-full px-4 py-3 rounded-xl border border-gray-200" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Categoria</label>
@@ -134,32 +144,31 @@ export default function AdminPage() {
                 </select>
               </div>
             </div>
-            <button type="submit" disabled={carregando} className="w-full bg-[#330f4a] hover:bg-[#4a186b] text-white font-bold py-4 rounded-xl transition-colors mt-2">
-              {carregando ? 'Processando (Seguro)...' : 'Adicionar à Vitrine'}
+
+            <button type="submit" disabled={carregando} className="w-full bg-[#330f4a] hover:bg-[#4a186b] text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95">
+              {carregando ? 'Enviando...' : 'Publicar na Vitrine'}
             </button>
             {mensagem && <div className={`p-3 rounded-xl text-center text-sm font-semibold ${mensagem.includes('sucesso') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>{mensagem}</div>}
           </form>
         </div>
 
-        {/* LADO DIREITO: Gerenciamento */}
-        <div className="w-full md:w-1/2 bg-white rounded-[2rem] shadow-xl p-8 border border-gray-100 flex flex-col h-max">
-          <h2 className="text-xl font-bold text-[#330f4a] mb-6 border-b pb-4">Gerenciar Produtos</h2>
-          <div className="flex-1 overflow-y-auto max-h-[600px] space-y-4 pr-2">
+        {/* LISTA DE PRODUTOS */}
+        <div className="w-full md:w-1/2 bg-white rounded-[2rem] shadow-xl p-6 md:p-8 border border-gray-100 flex flex-col h-max">
+          <h2 className="text-xl font-bold text-[#330f4a] mb-6 border-b pb-4">Seu Estoque</h2>
+          <div className="flex-1 overflow-y-auto max-h-[500px] space-y-4 pr-2">
             {listaProdutos.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-10">Nenhum produto cadastrado.</p>
+              <p className="text-gray-500 text-sm text-center py-10">Aguardando novos produtos...</p>
             ) : (
               listaProdutos.map((produto) => (
-                <div key={produto.id} className="flex items-center justify-between border border-gray-100 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                <div key={produto.id} className="flex items-center justify-between border border-gray-100 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                       {produto.imagem_url && <img src={produto.imagem_url} alt="img" className="w-full h-full object-cover" />}
-                    </div>
+                    <img src={produto.imagem_url} alt="img" className="w-12 h-12 rounded-lg object-cover bg-gray-100" />
                     <div>
-                      <h4 className="font-bold text-gray-800 text-sm">{produto.nome}</h4>
-                      <p className="text-xs text-gray-500">{produto.preco} • {produto.categoria}</p>
+                      <h4 className="font-bold text-gray-800 text-xs">{produto.nome}</h4>
+                      <p className="text-[10px] text-gray-500">{produto.preco}</p>
                     </div>
                   </div>
-                  <button onClick={() => handleDeletar(produto.id)} className="bg-red-100 hover:bg-red-200 text-red-700 p-2 rounded-lg text-xs font-bold transition-colors">Excluir</button>
+                  <button onClick={() => handleDeletar(produto.id)} className="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-bold uppercase hover:bg-red-100">Excluir</button>
                 </div>
               ))
             )}
