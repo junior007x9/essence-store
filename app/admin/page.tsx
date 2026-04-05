@@ -96,21 +96,21 @@ export default function AdminPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* CAMPO DE IMAGEM MELHORADO PARA CELULAR */}
+            {/* CAMPO DE IMAGEM CORRIGIDO: Removido o 'capture' para permitir Galeria */}
             <div className="relative">
               <label className="block text-sm font-semibold text-gray-700 mb-2">Selecione a Foto</label>
               <div className="flex items-center justify-center w-full">
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all overflow-hidden">
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all overflow-hidden relative">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg className="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
-                    <p className="text-xs text-gray-500">Toque para abrir a Galeria</p>
+                    <svg className="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <p className="text-xs text-gray-500 font-medium px-4 text-center">Toque para selecionar da Galeria ou tirar Foto</p>
                   </div>
                   <input 
                     required 
                     type="file" 
                     name="imagem" 
                     accept="image/*"
-                    capture="environment" // Dica para abrir a câmera no mobile (opcional)
+                    /* Removido o capture="environment" para abrir o menu de escolha */
                     className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
                   />
                 </label>
@@ -152,7 +152,6 @@ export default function AdminPage() {
           </form>
         </div>
 
-        {/* LISTA DE PRODUTOS */}
         <div className="w-full md:w-1/2 bg-white rounded-[2rem] shadow-xl p-6 md:p-8 border border-gray-100 flex flex-col h-max">
           <h2 className="text-xl font-bold text-[#330f4a] mb-6 border-b pb-4">Seu Estoque</h2>
           <div className="flex-1 overflow-y-auto max-h-[500px] space-y-4 pr-2">
