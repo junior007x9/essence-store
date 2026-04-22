@@ -14,12 +14,9 @@ function extrairPrecoNum(precoString: string) {
 
 function calcularPrecos(precoString: string) {
   const precoNum = extrairPrecoNum(precoString);
-  if (isNaN(precoNum) || precoNum === 0) return { precoOriginal: precoString, parcela: "Consulte" };
-  const precoCartao = precoNum + 10;
+  if (isNaN(precoNum) || precoNum === 0) return { precoPix: precoString };
   return {
-    precoPix: precoString, 
-    valorCartaoTotal: formatarPreco(precoCartao),
-    parcela: (precoCartao / 3).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    precoPix: precoString
   };
 }
 
@@ -61,7 +58,7 @@ export default function VitrineCliente({ produtosIniciais }: { produtosIniciais:
     const precos = calcularPrecos(produtoModal.preco);
     const formaPagamentoTexto = metodoPagamento === 'pix' 
       ? `no *Pix* (${precos.precoPix})` 
-      : `no *Cartão* (em até 3x de ${precos.parcela})`;
+      : `no *Cartão* (em até 5x com acréscimo)`;
 
     // Texto atualizado com a verificação de disponibilidade
     const mensagem = `Olá Essence! Amei o produto *${produtoModal.nome}* e gostaria de verificar a disponibilidade para finalizar a compra.\n\nForma de pagamento escolhida: ${formaPagamentoTexto}.\nComo prosseguimos?`;
@@ -79,10 +76,8 @@ export default function VitrineCliente({ produtosIniciais }: { produtosIniciais:
       totalPix += extrairPrecoNum(p.preco);
     });
     
-    const totalCartao = totalPix + 10;
-    
     mensagem += `\n*Total (Pix):* ${formatarPreco(totalPix)}`;
-    mensagem += `\n*Total (Cartão):* Até 3x de ${formatarPreco(totalCartao / 3)}`;
+    mensagem += `\n*Total (Cartão):* Em até 5x com acréscimo`;
     mensagem += `\n\nPodemos confirmar a disponibilidade destes itens?`;
 
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensagem)}`;
@@ -235,14 +230,14 @@ export default function VitrineCliente({ produtosIniciais }: { produtosIniciais:
                   }`}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs text-gray-500 font-medium">Até 3x no Cartão</span>
+                    <span className="text-xs text-gray-500 font-medium">Cartão de Crédito</span>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill={metodoPagamento === 'cartao' ? '#330f4a' : '#9ca3af'}>
                       <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
                     </svg>
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900 text-lg md:text-2xl">{calcularPrecos(produtoModal.preco).parcela}</div>
-                    <div className="text-[10px] text-gray-500 mt-1">Total: {calcularPrecos(produtoModal.preco).valorCartaoTotal}</div>
+                    <div className="font-bold text-gray-900 text-lg md:text-2xl">Até 5x</div>
+                    <div className="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Com acréscimo</div>
                   </div>
                 </div>
               </div>
